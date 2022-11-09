@@ -1,7 +1,8 @@
 import random 
 import string
+import json
 
-passwords = {}
+passwords = json.load(open('passwords.json'))
 
 def pw_gen():
     len = random.randint(9,16)
@@ -18,6 +19,10 @@ def generate_pw(site):
     pw = pw_gen()
     password = (site,pw)
     passwords[site] = password
+    j = json.dumps(passwords)
+    with open('passwords.json', 'w') as f:
+        f.write(j)
+        f.close()
     print('New password for '+site+': '+pw)
     print('Password has been saved')
 
