@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" 
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" 
+    crossorigin="anonymous">
+
+</head>
+<body>
+    <div class="container mt-5">
+      <h1>Buscador Amazon</h1>
+      <input type="text" id="formulario" class="from-control my-2">
+      <button class="btn btn-info mb-2" id="boton">Buscar</button>
+      <button class="btn btn-info mb-2" id="boton2">Buscar desde API</button>
+      <ul id="resultado">
+
+      </ul>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      
+      const productos = [
+      {nombre: 'Platanos', valor : 500},
+      {nombre: 'Pera', valor : 500},
+      {nombre: 'Sandia', valor : 500},
+      {nombre: 'Melon', valor : 500},
+      {nombre: 'Frutillas', valor : 500},
+      ]
+
+      const formulario =document.querySelector('#formulario');
+      const boton = document.querySelector('#boton');
+      const resultado = document.querySelector('#resultado')
+
+      const filtrar = ()=>{
+        //console.log(formulario.value);
+        resultado.innerHTML = '';
+
+        const text = formulario.value.toLowerCase();
+        
+        for(let producto of productos){
+           let nombre = producto.nombre.toLowerCase();
+           if(nombre.indexOf(text) !== -1){
+             resultado.innerHTML += `
+             <ul>${producto.nombre} - Valor: ${producto.nombre} </ul>
+             `
+           }
+        }
+        if(resultado.innerHTML === ''){
+            resultado.innerHTML += `
+             <ul>Producto no encontrado... </ul>
+             ` 
+        }
+      }
+
+      
+
+      boton.addEventListener('click', filtrar)
+      formulario.addEventListener('keyup', filtrar)
+      
+      //filtrar();
+      //Using JQuery
+      function search(event){
+          const text = $("#formulario").val();
+
+        	$.ajax({
+            url: "http://127.0.0.1:5000/product?text="+ text,
+            success: function(result){
+              resultado.innerHTML = '';
+              var products = JSON.parse(result);
+              
+              
+              for(let producto of products){
+                let name = producto.name.toLowerCase();
+                let image_url = decodeURI(producto.image_url);
+                if(name.indexOf(text) !== -1){
+                  resultado.innerHTML += `
+                  <ul>${producto.name} - Valor: ${producto.price} <img src='${image_url}'> </ul>
+                  `
+                }
+              }
+              if(resultado.innerHTML === ''){
+                  resultado.innerHTML += `
+                  <ul>Producto no encontrado... </ul>
+                  ` 
+              }
+            }
+          });
+      }
+      $("#boton2").on("click", search);
+    </script>
+</body>
+
+</html>
